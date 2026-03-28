@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库
+  mysql:
+    image: mysql:8.0
+    container_name: piano_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: piano_assistant
+      MYSQL_USER: piano_user
+      MYSQL_PASSWORD: piano_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  # MongoDB 数据库
+  mongodb:
+    image: mongo:6.0
+    container_name: piano_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_password
+      MONGO_INITDB_DATABASE: piano_assistant
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  # 后端服务
+  backend:
+    build: .
+    container_name: piano_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USERNAME: piano_user
+      MYSQL_PASSWORD: piano_password
+      MYSQL_DATABASE: piano_assistant
+      MONGODB_URI: mongodb://admin:admin_password@mongodb:27017/piano_assistant?authSource=admin
+      JWT_SECRET: your-production-jwt-secret-key
+    depends_on:
+      - mysql
+      - mongodb
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  mysql_data:
+  mongodb_data:
