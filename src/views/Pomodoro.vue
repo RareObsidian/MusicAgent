@@ -1,35 +1,35 @@
 <template>
   <div class="pomodoro">
-    <h2>·¬ÇÑÖÓ</h2>
-    
+    <h2>ç•ªèŒ„é’Ÿ</h2>
+
     <div class="timer-display">
       <div class="time">{{ formattedTime }}</div>
       <div class="status">{{ statusText }}</div>
     </div>
-    
+
     <div class="controls">
       <button v-if="!isRunning" class="btn btn-primary" @click="start">
-        ¿ªÊ¼
+        å¼€å§‹
       </button>
       <button v-else class="btn btn-warning" @click="pause">
-        ÔİÍ£
+        æš‚åœ
       </button>
       <button class="btn btn-danger" @click="reset">
-        ÖØÖÃ
+        é‡ç½®
       </button>
     </div>
-    
+
     <div class="settings">
       <label>
-        ×¨×¢Ê±³¤:
+        ä¸“æ³¨æ—¶é•¿:
         <input v-model.number="focusDuration" type="number" min="1" max="60" />
-        ·ÖÖÓ
+        åˆ†é’Ÿ
       </label>
     </div>
-    
+
     <div class="stats">
-      <p>½ñÈÕ×¨×¢´ÎÊı: {{ todayCount }}</p>
-      <p>½ñÈÕ×ÜÊ±³¤: {{ todayTotal }} ·ÖÖÓ</p>
+      <p>ä»Šæ—¥å®Œæˆæ¬¡æ•°: {{ todayCount }}</p>
+      <p>ä»Šæ—¥ä¸“æ³¨æ—¶é•¿: {{ todayTotal }} åˆ†é’Ÿ</p>
     </div>
   </div>
 </template>
@@ -50,7 +50,7 @@ const formattedTime = computed(() => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 })
 
-const statusText = computed(() => isRunning.value ? '×¨×¢ÖĞ...' : 'ÒÑÔİÍ£')
+const statusText = computed(() => isRunning.value ? 'ä¸“æ³¨ä¸­...' : 'å‡†å¤‡å°±ç»ª')
 
 function start() {
   if (!isRunning.value) {
@@ -79,7 +79,7 @@ function complete() {
   pause()
   todayCount.value++
   todayTotal.value += focusDuration.value
-  alert('×¨×¢Ê±¼ä½áÊø£¡')
+  alert('ä¸“æ³¨æ—¶é—´ç»“æŸï¼ä¼‘æ¯ä¸€ä¸‹å§~')
   reset()
 }
 
@@ -88,28 +88,41 @@ onUnmounted(() => clearInterval(timer))
 
 <style scoped>
 .pomodoro {
-  background: white;
+  background: linear-gradient(145deg, #FAF8F3 0%, #F0EBE0 100%);
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
   text-align: center;
+  border: 2px solid #D4C5A9;
+}
+
+.pomodoro h2 {
+  color: #4A4035;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .timer-display {
   margin: 30px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #E8DFD0 0%, #D4C5A9 100%);
+  border-radius: 12px;
+  border: 2px solid #C3B091;
 }
 
 .time {
   font-size: 72px;
   font-weight: bold;
-  color: #333;
-  font-family: monospace;
+  color: #4A4035;
+  font-family: 'Courier New', monospace;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
 }
 
 .status {
   margin-top: 10px;
-  color: #666;
+  color: #6B5B4F;
   font-size: 18px;
+  font-weight: 500;
 }
 
 .controls {
@@ -121,54 +134,93 @@ onUnmounted(() => clearInterval(timer))
 
 .btn {
   padding: 12px 30px;
-  border: none;
+  border: 2px solid;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s;
+  font-weight: 500;
 }
 
 .btn-primary {
-  background: #4CAF50;
-  color: white;
+  background: #6B7B4C;
+  color: #FAF8F3;
+  border-color: #6B7B4C;
+}
+
+.btn-primary:hover {
+  background: #5A6A3D;
+  border-color: #5A6A3D;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(107, 123, 76, 0.3);
 }
 
 .btn-warning {
-  background: #ff9800;
-  color: white;
+  background: #B8860B;
+  color: #FAF8F3;
+  border-color: #B8860B;
+}
+
+.btn-warning:hover {
+  background: #9A7009;
+  border-color: #9A7009;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(184, 134, 11, 0.3);
 }
 
 .btn-danger {
-  background: #f44336;
-  color: white;
+  background: #8B4513;
+  color: #FAF8F3;
+  border-color: #8B4513;
 }
 
-.btn:hover {
-  opacity: 0.9;
+.btn-danger:hover {
+  background: #6B3410;
+  border-color: #6B3410;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(139, 69, 19, 0.3);
 }
 
 .settings {
-  margin: 20px 0;
+  margin: 25px 0;
+  padding: 15px;
+  background: #F5F1E8;
+  border-radius: 8px;
+  border: 1px solid #D4C5A9;
+}
+
+.settings label {
+  color: #4A4035;
+  font-weight: 500;
 }
 
 .settings input {
   width: 60px;
-  padding: 5px;
-  border: 2px solid #ddd;
-  border-radius: 4px;
+  padding: 8px;
+  border: 2px solid #C3B091;
+  border-radius: 6px;
   text-align: center;
+  background: #FAF8F3;
+  color: #4A4035;
+  font-weight: 600;
+}
+
+.settings input:focus {
+  outline: none;
+  border-color: #B8860B;
 }
 
 .stats {
   margin-top: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  padding: 20px;
+  background: linear-gradient(135deg, #E8DFD0 0%, #D4C5A9 100%);
+  border-radius: 12px;
+  border: 1px solid #C3B091;
 }
 
 .stats p {
-  margin: 5px 0;
-  color: #666;
+  margin: 8px 0;
+  color: #4A4035;
+  font-weight: 500;
 }
 </style>

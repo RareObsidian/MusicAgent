@@ -1,4 +1,4 @@
-﻿<template>
+﻿﻿<template>
   <div class="scale-learning">
     <h2>音阶学习</h2>
     <p>选择调性和模式来查看五线谱</p>
@@ -148,10 +148,22 @@ function getFlatOrder(count) {
 
 <style scoped>
 .scale-learning {
-  background: white;
+  background: linear-gradient(145deg, #FAF8F3 0%, #F0EBE0 100%);
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+  border: 2px solid #D4C5A9;
+}
+
+.scale-learning h2 {
+  color: #4A4035;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.scale-learning > p {
+  color: #6B5B4F;
+  margin-bottom: 20px;
 }
 
 .controls {
@@ -170,15 +182,22 @@ function getFlatOrder(count) {
 
 .control-group label {
   font-weight: 500;
-  color: #666;
+  color: #4A4035;
 }
 
 .select {
   padding: 10px 15px;
-  border: 2px solid #ddd;
+  border: 2px solid #C3B091;
   border-radius: 8px;
   font-size: 16px;
   min-width: 80px;
+  background: #FAF8F3;
+  color: #4A4035;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #B8860B;
 }
 
 .clef-toggle {
@@ -188,22 +207,24 @@ function getFlatOrder(count) {
 
 .clef-btn {
   padding: 8px 16px;
-  border: 2px solid #ddd;
-  background: white;
+  border: 2px solid #C3B091;
+  background: #FAF8F3;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 14px;
+  color: #6B5B4F;
 }
 
 .clef-btn:hover {
-  border-color: #4CAF50;
+  border-color: #B8860B;
+  background: #E8DFD0;
 }
 
 .clef-btn.active {
-  background: #4CAF50;
-  color: white;
-  border-color: #4CAF50;
+  background: #8B7355;
+  color: #FAF8F3;
+  border-color: #8B7355;
 }
 
 .mode-toggle {
@@ -214,52 +235,56 @@ function getFlatOrder(count) {
 
 .mode-btn {
   padding: 10px 20px;
-  border: 2px solid #ddd;
-  background: white;
+  border: 2px solid #C3B091;
+  background: #FAF8F3;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
+  color: #6B5B4F;
 }
 
 .mode-btn:hover {
-  border-color: #4CAF50;
+  border-color: #B8860B;
+  background: #E8DFD0;
 }
 
 .mode-btn.active {
-  background: #4CAF50;
-  color: white;
-  border-color: #4CAF50;
+  background: #8B7355;
+  color: #FAF8F3;
+  border-color: #8B7355;
 }
 
 .score-section {
   margin-top: 30px;
   padding: 20px;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #E8DFD0 0%, #D4C5A9 100%);
   border-radius: 12px;
+  border: 1px solid #C3B091;
 }
 
 .score-section h3 {
   text-align: center;
   margin-bottom: 20px;
-  color: #333;
+  color: #4A4035;
 }
 
 .piano-section {
   margin-top: 30px;
   padding: 20px;
-  background: #f0f7ff;
+  background: linear-gradient(135deg, #E8E4D8 0%, #D8D0C0 100%);
   border-radius: 12px;
+  border: 1px solid #C3B091;
 }
 
 .piano-section h4 {
   text-align: center;
   margin-bottom: 10px;
-  color: #333;
+  color: #4A4035;
 }
 
 .piano-hint {
   text-align: center;
-  color: #666;
+  color: #6B5B4F;
   font-size: 14px;
   margin-bottom: 15px;
 }
@@ -267,14 +292,15 @@ function getFlatOrder(count) {
 .notes-display {
   margin-top: 30px;
   padding: 20px;
-  background: #f0f7f0;
+  background: linear-gradient(135deg, #F0EBE0 0%, #E0D8C8 100%);
   border-radius: 12px;
   text-align: center;
+  border: 1px solid #C3B091;
 }
 
 .notes-display h4 {
   margin-bottom: 15px;
-  color: #333;
+  color: #4A4035;
 }
 
 .notes {
@@ -291,52 +317,58 @@ function getFlatOrder(count) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #4CAF50;
-  color: white;
+  background: #6B7B4C;
+  color: #FAF8F3;
   border-radius: 50%;
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s;
   user-select: none;
+  border: 2px solid #5A6A3D;
 }
 
 .note:hover {
-  background: #45a049;
+  background: #5A6A3D;
   transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(107, 123, 76, 0.3);
 }
 
 .play-btn {
   margin-top: 15px;
   padding: 12px 30px;
-  background: #2196F3;
-  color: white;
-  border: none;
+  background: #B8860B;
+  color: #FAF8F3;
+  border: 2px solid #B8860B;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s;
+  font-weight: 500;
 }
 
 .play-btn:hover {
-  background: #1976D2;
+  background: #9A7009;
+  border-color: #9A7009;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(184, 134, 11, 0.3);
 }
 
 .key-info {
   margin-top: 20px;
   padding: 15px 20px;
-  background: #fff3e0;
+  background: linear-gradient(135deg, #F5E6D3 0%, #E8D4B8 100%);
   border-radius: 8px;
+  border: 1px solid #D4C5A9;
 }
 
 .key-info h4 {
   margin-bottom: 10px;
-  color: #e65100;
+  color: #8B4513;
 }
 
 .key-info p {
-  color: #666;
+  color: #6B5B4F;
   margin: 5px 0;
 }
 </style>

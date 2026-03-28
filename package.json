@@ -1,7 +1,7 @@
 {
   "name": "musicagent",
   "version": "1.0.0",
-  "description": "�������� - ����ѧϰӦ��",
+  "description": "智能音乐助手 - 专注音乐学习与练习",
   "type": "module",
   "scripts": {
     "dev": "vite",
