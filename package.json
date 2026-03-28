@@ -1,0 +1,22 @@
+{
+  "name": "musicagent",
+  "version": "1.0.0",
+  "description": "¸ÖÇŮÖúĘÖ - ŇôŔÖŃ§Ď°ÓŚÓĂ",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.21",
+    "pinia": "^2.1.7",
+    "vexflow": "^4.0.3",
+    "echarts": "^5.5.0",
+    "vue-echarts": "^6.6.9"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.2.0"
+  }
+}
