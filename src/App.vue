@@ -5,7 +5,7 @@
         <h1>🎹 钢琴助手</h1>
         <div class="user-info">
           <span v-if="authStore.isAuthenticated" class="welcome">
-            欢迎, {{ authStore.user.username }}
+            欢迎, {{ authStore.user.nickname || authStore.user.email }}
           </span>
           <button v-if="authStore.isAuthenticated" class="btn-logout" @click="handleLogout">
             登出
