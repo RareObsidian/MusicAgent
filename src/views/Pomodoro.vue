@@ -1,6 +1,16 @@
 <template>
   <div class="pomodoro">
-    <h2>番茄钟</h2>
+    <h2>练习计时</h2>
+
+    <div class="practice-type">
+      <label>练习类型:</label>
+      <select v-model="selectedType" class="type-select">
+        <option value="音阶">音阶</option>
+        <option value="曲目">曲目</option>
+        <option value="视奏">视奏</option>
+        <option value="乐理">乐理</option>
+      </select>
+    </div>
 
     <div class="timer-display">
       <div class="time">{{ formattedTime }}</div>
@@ -21,27 +31,30 @@
 
     <div class="settings">
       <label>
-        专注时长:
-        <input v-model.number="focusDuration" type="number" min="1" max="60" />
+        练习时长:
+        <input v-model.number="focusDuration" type="number" min="1" max="120" />
         分钟
       </label>
     </div>
 
     <div class="stats">
-      <p>今日完成次数: {{ todayCount }}</p>
-      <p>今日专注时长: {{ todayTotal }} 分钟</p>
+      <p>今日完成次数: {{ practiceStore.practiceRecords.length }}</p>
+      <p>今日专注时长: {{ practiceStore.practiceStats.todayMinutes }} 分钟</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onUnmounted } from 'vue'
+import { usePracticeStore } from '../stores/practice'
+
+const practiceStore = usePracticeStore()
 
 const focusDuration = ref(25)
 const timeLeft = ref(25 * 60)
 const isRunning = ref(false)
-const todayCount = ref(0)
-const todayTotal = ref(0)
+const selectedType = ref('音阶')
+const currentPracticeId = ref(null)
 let timer = null
 
 const formattedTime = computed(() => {
@@ -50,11 +63,24 @@ const formattedTime = computed(() => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 })
 
-const statusText = computed(() => isRunning.value ? '专注中...' : '准备就绪')
+const statusText = computed(() => isRunning.value ? '练习中...' : '准备就绪')
 
-function start() {
+async function start() {
   if (!isRunning.value) {
     isRunning.value = true
+    
+    // 开始练习记录
+    try {
+      const practiceData = {
+        type: selectedType.value,
+        startTime: new Date().toISOString()
+      }
+      const response = await practiceStore.startPractice(practiceData)
+      currentPracticeId.value = response.id
+    } catch (error) {
+      console.error('开始练习失败:', error)
+    }
+    
     timer = setInterval(() => {
       if (timeLeft.value > 0) {
         timeLeft.value--
@@ -65,25 +91,53 @@ function start() {
   }
 }
 
-function pause() {
+async function pause() {
   isRunning.value = false
   clearInterval(timer)
+  
+  // 暂停练习记录
+  if (currentPracticeId.value) {
+    try {
+      await practiceStore.pausePractice(currentPracticeId.value)
+    } catch (error) {
+      console.error('暂停练习失败:', error)
+    }
+  }
 }
 
-function reset() {
-  pause()
+async function reset() {
+  await pause()
   timeLeft.value = focusDuration.value * 60
+  currentPracticeId.value = null
 }
 
-function complete() {
-  pause()
-  todayCount.value++
-  todayTotal.value += focusDuration.value
-  alert('专注时间结束！休息一下吧~')
-  reset()
+async function complete() {
+  await pause()
+  
+  // 结束练习记录
+  if (currentPracticeId.value) {
+    try {
+      const endData = {
+        endTime: new Date().toISOString(),
+        durationSeconds: focusDuration.value * 60
+      }
+      await practiceStore.endPractice(currentPracticeId.value, endData)
+    } catch (error) {
+      console.error('结束练习失败:', error)
+    }
+  }
+  
+  alert('练习时间结束！休息一下吧~')
+  await reset()
 }
 
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => {
+  clearInterval(timer)
+  if (currentPracticeId.value && isRunning.value) {
+    // 自动结束练习
+    complete()
+  }
+})
 </script>
 
 <style scoped>
@@ -100,6 +154,31 @@ onUnmounted(() => clearInterval(timer))
   color: #4A4035;
   margin-bottom: 20px;
   font-weight: 600;
+}
+
+.practice-type {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #4A4035;
+  font-weight: 500;
+}
+
+.type-select {
+  padding: 8px 16px;
+  border: 2px solid #C3B091;
+  border-radius: 6px;
+  background: #FAF8F3;
+  color: #4A4035;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.type-select:focus {
+  outline: none;
+  border-color: #B8860B;
 }
 
 .timer-display {

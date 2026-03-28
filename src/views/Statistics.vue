@@ -2,28 +2,36 @@
   <div class="statistics">
     <h2>学习统计</h2>
     
-    <div class="stats-grid">
+    <div v-if="practiceStore.loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p>加载中...</p>
+    </div>
+    
+    <div v-else class="stats-grid">
       <div class="stat-card">
         <h3>今日学习时长</h3>
-        <div class="stat-value">{{ todayMinutes }} 分钟</div>
+        <div class="stat-value">{{ practiceStore.practiceStats.todayMinutes }} 分钟</div>
       </div>
       <div class="stat-card">
         <h3>本周学习时长</h3>
-        <div class="stat-value">{{ weekMinutes }} 分钟</div>
+        <div class="stat-value">{{ practiceStore.practiceStats.weekMinutes }} 分钟</div>
       </div>
       <div class="stat-card">
         <h3>连续学习天数</h3>
-        <div class="stat-value">{{ streakDays }} 天</div>
+        <div class="stat-value">{{ practiceStore.practiceStats.streakDays }} 天</div>
       </div>
     </div>
     
     <div class="recent-records">
       <h3>最近学习记录</h3>
       <ul>
-        <li v-for="(record, index) in recentRecords" :key="index" class="record-item">
-          <span>{{ record.date }}</span>
+        <li v-for="(record, index) in practiceStore.practiceRecords" :key="record.id || index" class="record-item">
+          <span>{{ formatDate(record.startTime) }}</span>
           <span>{{ record.type }}</span>
-          <span>{{ record.duration }} 分钟</span>
+          <span>{{ Math.round(record.durationSeconds / 60) }} 分钟</span>
+        </li>
+        <li v-if="practiceStore.practiceRecords.length === 0" class="no-records">
+          暂无练习记录
         </li>
       </ul>
     </div>
@@ -31,19 +39,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted } from 'vue'
+import { usePracticeStore } from '../stores/practice'
 
-const todayMinutes = ref(45)
-const weekMinutes = ref(180)
-const streakDays = ref(3)
+const practiceStore = usePracticeStore()
 
-const recentRecords = ref([
-  { date: '2026-03-28', type: '音阶练习', duration: 25 },
-  { date: '2026-03-28', type: '和弦练习', duration: 25 },
-  { date: '2026-03-27', type: '音阶练习', duration: 30 },
-  { date: '2026-03-26', type: '和弦练习', duration: 25 },
-  { date: '2026-03-25', type: '音阶练习', duration: 20 }
-])
+// 格式化日期
+function formatDate(dateString) {
+  const date = new Date(dateString)
+  return date.toISOString().split('T')[0]
+}
+
+// 初始化数据
+onMounted(async () => {
+  await practiceStore.init()
+})
 </script>
 
 <style scoped>
@@ -122,5 +132,37 @@ const recentRecords = ref([
 .record-item span:last-child {
   color: #6B7B4C;
   font-weight: 600;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #8B7355;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #E8DFD0;
+  border-top: 4px solid #8B7355;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.no-records {
+  text-align: center;
+  padding: 20px;
+  color: #6B5B4F;
+  font-style: italic;
+  background: linear-gradient(135deg, #E8DFD0 0%, #D4C5A9 100%);
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid #C3B091;
 }
 </style>
