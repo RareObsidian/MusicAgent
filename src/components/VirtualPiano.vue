@@ -28,7 +28,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { playNote as playNoteAudio, getScaleNotes } from '../utils/musicTheory.js'
+import { playNote as playNoteAudio, getScaleNotes, getKeySignature } from '../utils/musicTheory.js'
 
 const props = defineProps({
   keyName: {
@@ -41,38 +41,75 @@ const props = defineProps({
   }
 })
 
-// 白键配置 (C3 到 C5)
-const whiteKeys = [
-  { name: 'C3', label: 'C3' },
-  { name: 'D3', label: 'D3' },
-  { name: 'E3', label: 'E3' },
-  { name: 'F3', label: 'F3' },
-  { name: 'G3', label: 'G3' },
-  { name: 'A3', label: 'A3' },
-  { name: 'B3', label: 'B3' },
-  { name: 'C4', label: 'C4' },
-  { name: 'D4', label: 'D4' },
-  { name: 'E4', label: 'E4' },
-  { name: 'F4', label: 'F4' },
-  { name: 'G4', label: 'G4' },
-  { name: 'A4', label: 'A4' },
-  { name: 'B4', label: 'B4' },
-  { name: 'C5', label: 'C5' }
-]
+// 判断是否使用降号（根据调号）
+const useFlats = computed(() => {
+  const keySig = getKeySignature(props.keyName)
+  return keySig.flats > 0 || props.keyName === 'F'
+})
 
-// 黑键配置 (带位置百分比)
-const blackKeys = [
-  { name: 'C#3', label: 'C#3', position: 3.33 },
-  { name: 'D#3', label: 'D#3', position: 10 },
-  { name: 'F#3', label: 'F#3', position: 23.33 },
-  { name: 'G#3', label: 'G#3', position: 30 },
-  { name: 'A#3', label: 'A#3', position: 36.66 },
-  { name: 'C#4', label: 'C#4', position: 50 },
-  { name: 'D#4', label: 'D#4', position: 56.66 },
-  { name: 'F#4', label: 'F#4', position: 70 },
-  { name: 'G#4', label: 'G#4', position: 76.66 },
-  { name: 'A#4', label: 'A#4', position: 83.33 }
-]
+// 获取音符显示标签（根据调性决定使用升号还是降号）
+function getNoteLabel(noteName) {
+  const octave = noteName.match(/\d+/)?.[0] || ''
+  const baseNote = noteName.replace(/\d/g, '')
+  
+  // 黑键的等音转换
+  const sharpToFlat = {
+    'C#': 'Db',
+    'D#': 'Eb',
+    'F#': 'Gb',
+    'G#': 'Ab',
+    'A#': 'Bb'
+  }
+  
+  const flatToSharp = {
+    'Db': 'C#',
+    'Eb': 'D#',
+    'Gb': 'F#',
+    'Ab': 'G#',
+    'Bb': 'A#'
+  }
+  
+  if (useFlats.value && sharpToFlat[baseNote]) {
+    return sharpToFlat[baseNote] + octave
+  } else if (!useFlats.value && flatToSharp[baseNote]) {
+    return flatToSharp[baseNote] + octave
+  }
+  
+  return noteName
+}
+
+// 白键配置 (C3 到 C5)
+const whiteKeys = computed(() => [
+  { name: 'C3', label: 'C' },
+  { name: 'D3', label: 'D' },
+  { name: 'E3', label: 'E' },
+  { name: 'F3', label: 'F' },
+  { name: 'G3', label: 'G' },
+  { name: 'A3', label: 'A' },
+  { name: 'B3', label: 'B' },
+  { name: 'C4', label: 'C' },
+  { name: 'D4', label: 'D' },
+  { name: 'E4', label: 'E' },
+  { name: 'F4', label: 'F' },
+  { name: 'G4', label: 'G' },
+  { name: 'A4', label: 'A' },
+  { name: 'B4', label: 'B' },
+  { name: 'C5', label: 'C' }
+])
+
+// 黑键配置 (带位置百分比，固定使用降号标签)
+const blackKeys = computed(() => [
+  { name: 'C#3', label: 'C#', position: 3.33 },
+  { name: 'D#3', label: 'Eb', position: 10 },
+  { name: 'F#3', label: 'F#', position: 23.33 },
+  { name: 'G#3', label: 'Ab', position: 30 },
+  { name: 'A#3', label: 'Bb', position: 36.66 },
+  { name: 'C#4', label: 'C#', position: 50 },
+  { name: 'D#4', label: 'Eb', position: 56.66 },
+  { name: 'F#4', label: 'F#', position: 70 },
+  { name: 'G#4', label: 'Ab', position: 76.66 },
+  { name: 'A#4', label: 'Bb', position: 83.33 }
+])
 
 // 计算当前音阶的音符
 const scaleNotes = computed(() => {

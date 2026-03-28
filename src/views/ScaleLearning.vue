@@ -75,7 +75,7 @@
         </span>
       </div>
       <button class="play-btn" @click="playScale">
-        �7�4 播放音阶
+        ▶ 播放音阶
       </button>
     </div>
     
