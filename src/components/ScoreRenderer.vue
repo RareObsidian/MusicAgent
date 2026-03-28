@@ -27,61 +27,44 @@ const props = defineProps({
 const scoreContainer = ref(null)
 const { Renderer, Stave, StaveNote, Voice, Formatter, Accidental } = VexFlow.Flow
 
-// ??????? VexFlow ???
-const keySignatureMap = {
-  'C': 'C',
-  'C#': 'C#',
-  'D': 'D',
-  'Eb': 'Eb',
-  'E': 'E',
-  'F': 'F',
-  'F#': 'F#',
-  'G': 'G',
-  'Ab': 'Ab',
-  'A': 'A',
-  'Bb': 'Bb',
-  'B': 'B'
-}
-
 function renderScore() {
   if (!scoreContainer.value) return
   
-  // ???????
+  // 清空容器
   scoreContainer.value.innerHTML = ''
   
-  // ???????????
+  // 获取音阶音符
   const scaleNotes = getVexFlowNotes(props.keyName, props.mode, props.clef === 'treble' ? 4 : 3)
   
   if (scaleNotes.length === 0) return
   
   try {
-    // ?????????
+    // 创建渲染器
     const renderer = new Renderer(scoreContainer.value, Renderer.Backends.SVG)
     
-    // ?????????С
+    // 设置画布大小
     const width = 800
     const height = 200
     renderer.resize(width, height)
     
     const context = renderer.getContext()
     
-    // ???????
+    // 创建谱表
     const staveX = 10
     const staveY = 20
     const staveWidth = width - 20
     
     const stave = new Stave(staveX, staveY, staveWidth)
     
-    // ???????
+    // 只添加谱号，不添加调号
     stave.addClef(props.clef)
-    
-    // ???????
-    const vexKey = keySignatureMap[props.keyName] || 'C'
-    stave.addKeySignature(vexKey)
     
     stave.setContext(context).draw()
     
-    // ????????
+    // 获取调号信息，用于判断哪些音需要显示升降号
+    const keySig = getKeySignature(props.keyName)
+    
+    // 创建音符
     const notes = scaleNotes.map((noteData) => {
       const staveNote = new StaveNote({
         clef: props.clef,
@@ -90,19 +73,17 @@ function renderScore() {
         auto_stem: true
       })
       
-      // ??????????????????????
-      if (noteData.isSharp || noteData.isFlat) {
-        const needsAccidental = !isAccidentalInKeySignature(noteData.note, props.keyName)
-        if (needsAccidental) {
-          const accidental = noteData.isSharp ? '#' : 'b'
-          staveNote.addModifier(new Accidental(accidental), 0)
-        }
+      // 为所有需要升降号的音符添加临时升降号
+      if (noteData.isSharp) {
+        staveNote.addModifier(new Accidental('#'), 0)
+      } else if (noteData.isFlat) {
+        staveNote.addModifier(new Accidental('b'), 0)
       }
       
       return staveNote
     })
     
-    // ????????
+    // 创建声部
     const voice = new Voice({
       num_beats: notes.length,
       beat_value: 4
@@ -110,36 +91,14 @@ function renderScore() {
     
     voice.addTickables(notes)
     
-    // ???????????
+    // 格式化并绘制
     const formatter = new Formatter().joinVoices([voice]).format([voice], staveWidth - 100)
     
     voice.draw(context, stave)
   } catch (error) {
     console.error('Error rendering score:', error)
-    scoreContainer.value.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">?????????????</p>'
+    scoreContainer.value.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">五线谱渲染出错</p>'
   }
-}
-
-// ????????????????????????????????
-function isAccidentalInKeySignature(note, key) {
-  const keySig = getKeySignature(key)
-  
-  // ??????????: F#, C#, G#, D#, A#, E#, B#
-  const sharpOrder = ['F', 'C', 'G', 'D', 'A', 'E', 'B']
-  // ??????????: Bb, Eb, Ab, Db, Gb, Cb, Fb
-  const flatOrder = ['B', 'E', 'A', 'D', 'G', 'C', 'F']
-  
-  const baseNote = note.replace(/[#b]/g, '')
-  
-  if (keySig.sharps > 0) {
-    const sharpNotes = sharpOrder.slice(0, keySig.sharps)
-    return sharpNotes.includes(baseNote) && note.includes('#')
-  } else if (keySig.flats > 0) {
-    const flatNotes = flatOrder.slice(0, keySig.flats)
-    return flatNotes.includes(baseNote) && note.includes('b')
-  }
-  
-  return false
 }
 
 onMounted(() => {
