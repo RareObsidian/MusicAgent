@@ -35,11 +35,11 @@
       </div>
       
       <div v-if="!isLogin" class="form-group">
-        <label>用户名</label>
+        <label>昵称</label>
         <input 
-          v-model="form.username" 
+          v-model="form.nickname" 
           type="text" 
-          placeholder="请输入用户名" 
+          placeholder="请输入昵称" 
           class="form-input"
           required
         />
@@ -69,7 +69,7 @@ const isLogin = ref(true)
 const form = reactive({
   email: '',
   password: '',
-  username: ''
+  nickname: ''
 })
 
 async function handleSubmit() {
@@ -82,7 +82,7 @@ async function handleSubmit() {
       alert('登录成功！')
     } else {
       await authStore.register({
-        username: form.username,
+        nickname: form.nickname,
         email: form.email,
         password: form.password
       })
