@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <header class="header">
-      <h1>”9Â3 ¸ÖÇÙÖúÊÖ</h1>
+      <h1>🎹 钢琴助手</h1>
       <nav class="nav">
         <button 
           v-for="tab in tabs" 
@@ -31,9 +31,9 @@ import Statistics from './views/Statistics.vue'
 const currentTab = ref('scale')
 
 const tabs = [
-  { id: 'scale', name: 'Òô½×Ñ§Ï°' },
-  { id: 'pomodoro', name: '·¬ÇÑÖÓ' },
-  { id: 'stats', name: 'Êý¾ÝÍ³¼Æ' }
+  { id: 'scale', name: '音阶学习' },
+  { id: 'pomodoro', name: '番茄钟' },
+  { id: 'stats', name: '数据统计' }
 ]
 </script>
 
