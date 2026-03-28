@@ -5,10 +5,11 @@
     <div class="practice-type">
       <label>练习类型:</label>
       <select v-model="selectedType" class="type-select">
-        <option value="音阶">音阶</option>
-        <option value="曲目">曲目</option>
-        <option value="视奏">视奏</option>
-        <option value="乐理">乐理</option>
+        <option value="音阶练习">音阶</option>
+        <option value="曲目练习">曲目</option>
+        <option value="视奏练习">视奏</option>
+        <option value="乐理学习">乐理</option>
+        <option value="自由练习">自由练习</option>
       </select>
     </div>
 
@@ -53,7 +54,7 @@ const practiceStore = usePracticeStore()
 const focusDuration = ref(25)
 const timeLeft = ref(25 * 60)
 const isRunning = ref(false)
-const selectedType = ref('音阶')
+const selectedType = ref('音阶练习')
 const currentPracticeId = ref(null)
 let timer = null
 
