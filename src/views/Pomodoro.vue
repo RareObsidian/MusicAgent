@@ -1,6 +1,6 @@
 <template>
   <div class="pomodoro">
-    <h2>ç•ªèŒ„é’Ÿ</h2>
+    <h2>·¬ÇÑÖÓ</h2>
     
     <div class="timer-display">
       <div class="time">{{ formattedTime }}</div>
@@ -9,27 +9,27 @@
     
     <div class="controls">
       <button v-if="!isRunning" class="btn btn-primary" @click="start">
-        å¼€å§‹
+        ¿ªÊ¼
       </button>
       <button v-else class="btn btn-warning" @click="pause">
-        æš‚åœ
+        ÔİÍ£
       </button>
       <button class="btn btn-danger" @click="reset">
-        é‡ç½®
+        ÖØÖÃ
       </button>
     </div>
     
     <div class="settings">
       <label>
-        ä¸“æ³¨æ—¶é•¿:
+        ×¨×¢Ê±³¤:
         <input v-model.number="focusDuration" type="number" min="1" max="60" />
-        åˆ†é’Ÿ
+        ·ÖÖÓ
       </label>
     </div>
     
     <div class="stats">
-      <p>ä»Šæ—¥ä¸“æ³¨æ¬¡æ•°: {{ todayCount }}</p>
-      <p>ä»Šæ—¥æ€»æ—¶é•¿: {{ todayTotal }} åˆ†é’Ÿ</p>
+      <p>½ñÈÕ×¨×¢´ÎÊı: {{ todayCount }}</p>
+      <p>½ñÈÕ×ÜÊ±³¤: {{ todayTotal }} ·ÖÖÓ</p>
     </div>
   </div>
 </template>
@@ -50,7 +50,7 @@ const formattedTime = computed(() => {
   return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 })
 
-const statusText = computed(() => isRunning.value ? 'ä¸“æ³¨ä¸­...' : 'å·²æš‚åœ')
+const statusText = computed(() => isRunning.value ? '×¨×¢ÖĞ...' : 'ÒÑÔİÍ£')
 
 function start() {
   if (!isRunning.value) {
@@ -79,7 +79,7 @@ function complete() {
   pause()
   todayCount.value++
   todayTotal.value += focusDuration.value
-  alert('ä¸“æ³¨æ—¶é—´ç»“æŸï¼')
+  alert('×¨×¢Ê±¼ä½áÊø£¡')
   reset()
 }
 

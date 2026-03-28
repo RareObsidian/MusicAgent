@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="scale-learning">
     <h2>音阶学习</h2>
     <p>选择调性和模式来查看五线谱</p>
@@ -51,6 +51,16 @@
       />
     </div>
     
+    <!-- 虚拟钢琴 -->
+    <div class="piano-section">
+      <h4>虚拟钢琴</h4>
+      <p class="piano-hint">绿色表示音阶中的音，橙色表示根音，点击可播放</p>
+      <VirtualPiano 
+        :key-name="selectedKey" 
+        :mode="mode"
+      />
+    </div>
+    
     <!-- 音符显示 -->
     <div class="notes-display">
       <h4>音阶音符</h4>
@@ -65,7 +75,7 @@
         </span>
       </div>
       <button class="play-btn" @click="playScale">
-        ▶ 播放音阶
+        �7�4 播放音阶
       </button>
     </div>
     
@@ -88,6 +98,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ScoreRenderer from '../components/ScoreRenderer.vue'
+import VirtualPiano from '../components/VirtualPiano.vue'
 import { 
   allKeys, 
   getVexFlowNotes, 
@@ -231,6 +242,26 @@ function getFlatOrder(count) {
   text-align: center;
   margin-bottom: 20px;
   color: #333;
+}
+
+.piano-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f0f7ff;
+  border-radius: 12px;
+}
+
+.piano-section h4 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.piano-hint {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
 }
 
 .notes-display {
