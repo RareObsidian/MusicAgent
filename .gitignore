@@ -1,1 +1,16 @@
-node_modules
+backend/node_modules
+frontend/node_modules
+
+backend/dist
+backend/.env
+backend/docker-compose.yml
+backend/nest-cli.json
+backend/tsconfig.json
+backend/tsconfig.tsbuildinfo
+
+image
+
+document
+
+backend\docker-compose.yml
+backend\.env

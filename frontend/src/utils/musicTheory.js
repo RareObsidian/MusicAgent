@@ -1,7 +1,36 @@
 // 音乐理论工具模块
 
-// 音符频率映射（用于播放）
+// 音符频率映射（用于播放）- 包含 C3-C6 所有音符
 export const noteFrequencies = {
+  // 第3八度
+  'C3': 130.81, 'C#3': 138.59, 'Db3': 138.59,
+  'D3': 146.83, 'D#3': 155.56, 'Eb3': 155.56,
+  'E3': 164.81, 'F3': 174.61, 'F#3': 185.00, 'Gb3': 185.00,
+  'G3': 196.00, 'G#3': 207.65, 'Ab3': 207.65,
+  'A3': 220.00, 'A#3': 233.08, 'Bb3': 233.08,
+  'B3': 246.94,
+  // 第4八度（中央C）
+  'C4': 261.63, 'C#4': 277.18, 'Db4': 277.18,
+  'D4': 293.66, 'D#4': 311.13, 'Eb4': 311.13,
+  'E4': 329.63, 'F4': 349.23, 'F#4': 369.99, 'Gb4': 369.99,
+  'G4': 392.00, 'G#4': 415.30, 'Ab4': 415.30,
+  'A4': 440.00, 'A#4': 466.16, 'Bb4': 466.16,
+  'B4': 493.88,
+  // 第5八度
+  'C5': 523.25, 'C#5': 554.37, 'Db5': 554.37,
+  'D5': 587.33, 'D#5': 622.25, 'Eb5': 622.25,
+  'E5': 659.25, 'F5': 698.46, 'F#5': 739.99, 'Gb5': 739.99,
+  'G5': 783.99, 'G#5': 830.61, 'Ab5': 830.61,
+  'A5': 880.00, 'A#5': 932.33, 'Bb5': 932.33,
+  'B5': 987.77,
+  // 第6八度
+  'C6': 1046.50, 'C#6': 1108.73, 'Db6': 1108.73,
+  'D6': 1174.66, 'D#6': 1244.51, 'Eb6': 1244.51,
+  'E6': 1318.51, 'F6': 1396.91, 'F#6': 1479.98, 'Gb6': 1479.98,
+  'G6': 1567.98, 'G#6': 1661.22, 'Ab6': 1661.22,
+  'A6': 1760.00, 'A#6': 1864.66, 'Bb6': 1864.66,
+  'B6': 1975.53,
+  // 保持向后兼容的无八度音符（默认C4）
   'C': 261.63, 'C#': 277.18, 'Db': 277.18,
   'D': 293.66, 'D#': 311.13, 'Eb': 311.13,
   'E': 329.63, 'E#': 349.23, 'Fb': 329.63,
@@ -167,17 +196,33 @@ export function getVexFlowNotes(key, mode = 'major', octave = 4) {
 }
 
 // 播放音符（使用Web Audio API）
-export function playNote(note, duration = 0.5) {
-  // 标准化音符名称用于查找频率
-  let normalizedNote = note
-  if (note === 'B#') normalizedNote = 'C'
-  if (note === 'Cb') normalizedNote = 'B'
-  if (note === 'E#') normalizedNote = 'F'
-  if (note === 'Fb') normalizedNote = 'E'
+// note: 可以是带八度的音符（如'C4'）或不带八度的音符（如'C'）
+// octave: 可选，当note不带八度时指定八度（3, 4, 5）
+export function playNote(note, duration = 0.5, octave = null) {
+  // 检查note是否已包含八度信息
+  const hasOctave = /\d/.test(note)
+  let fullNote = note
   
-  const frequency = noteFrequencies[normalizedNote]
+  if (!hasOctave && octave) {
+    fullNote = note + octave
+  }
+  
+  // 标准化音符名称用于查找频率
+  let normalizedNote = fullNote
+  if (fullNote.startsWith('B#')) normalizedNote = fullNote.replace('B#', 'C')
+  if (fullNote.startsWith('Cb')) normalizedNote = fullNote.replace('Cb', 'B')
+  if (fullNote.startsWith('E#')) normalizedNote = fullNote.replace('E#', 'F')
+  if (fullNote.startsWith('Fb')) normalizedNote = fullNote.replace('Fb', 'E')
+  
+  let frequency = noteFrequencies[normalizedNote]
+  
+  // 如果没找到带八度的频率，尝试使用默认八度
+  if (!frequency && !hasOctave) {
+    frequency = noteFrequencies[note]
+  }
+  
   if (!frequency) {
-    console.warn('Unknown note:', note)
+    console.warn('Unknown note:', fullNote, 'normalized:', normalizedNote)
     return
   }
   
@@ -202,7 +247,9 @@ export function playNote(note, duration = 0.5) {
 export function playScale(notes, noteDuration = 0.5) {
   notes.forEach((noteData, index) => {
     setTimeout(() => {
-      playNote(noteData.note, noteDuration)
+      // 使用带八度的完整音符名称播放
+      const fullNote = noteData.octave ? `${noteData.note}${noteData.octave}` : noteData.note
+      playNote(fullNote, noteDuration)
     }, index * noteDuration * 1000)
   })
 }

@@ -1,4 +1,4 @@
-﻿﻿<template>
+<template>
   <div class="scale-learning">
     <h2>音阶学习</h2>
     <p>选择调性和模式来查看五线谱</p>
@@ -58,6 +58,7 @@
       <VirtualPiano 
         :key-name="selectedKey" 
         :mode="mode"
+        :clef="clef"
       />
     </div>
     

@@ -27,7 +27,7 @@
       <ul>
         <li v-for="(record, index) in practiceStore.practiceRecords" :key="record.id || index" class="record-item">
           <span>{{ formatDate(record.startTime) }}</span>
-          <span>{{ record.type }}</span>
+          <span>{{ record.type }} ({{ record.status }})</span>
           <span>{{ Math.round(record.durationSeconds / 60) }} 分钟</span>
         </li>
         <li v-if="practiceStore.practiceRecords.length === 0" class="no-records">

@@ -46,13 +46,26 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, onMounted, watch } from 'vue'
 import { usePracticeStore } from '../stores/practice'
 
 const practiceStore = usePracticeStore()
 
+// 组件挂载时加载统计数据
+onMounted(async () => {
+  await practiceStore.fetchPracticeStats()
+  await practiceStore.fetchPracticeRecords()
+})
+
 const focusDuration = ref(25)
 const timeLeft = ref(25 * 60)
+
+// 监听练习时长变化，自动更新倒计时（仅在未运行时）
+watch(focusDuration, (newValue) => {
+  if (!isRunning.value) {
+    timeLeft.value = newValue * 60
+  }
+})
 const isRunning = ref(false)
 const selectedType = ref('音阶练习')
 const currentPracticeId = ref(null)
@@ -107,20 +120,33 @@ async function pause() {
 }
 
 async function reset() {
-  await pause()
+  // 停止计时器
+  clearInterval(timer)
+  isRunning.value = false
+  
+  // 只有在练习未结束且有当前练习ID时才暂停
+  if (currentPracticeId.value) {
+    try {
+      await practiceStore.pausePractice(currentPracticeId.value)
+    } catch (error) {
+      // 忽略暂停失败（可能练习已结束）
+      console.log('暂停练习:', error.message)
+    }
+  }
+  
   timeLeft.value = focusDuration.value * 60
   currentPracticeId.value = null
 }
 
 async function complete() {
-  await pause()
+  // 先停止计时器，但保持 isRunning 状态，让 endPractice 来处理状态
+  clearInterval(timer)
   
   // 结束练习记录
   if (currentPracticeId.value) {
     try {
       const endData = {
-        endTime: new Date().toISOString(),
-        durationSeconds: focusDuration.value * 60
+        endTime: new Date().toISOString()
       }
       await practiceStore.endPractice(currentPracticeId.value, endData)
     } catch (error) {
@@ -128,6 +154,7 @@ async function complete() {
     }
   }
   
+  isRunning.value = false
   alert('练习时间结束！休息一下吧~')
   await reset()
 }
